@@ -25,10 +25,17 @@ class Match:
         clients = []
         player_names = []
 
+        self.__SEND_RES_FLAG = False
+        self.__DRAW = True
+
         self.__real_answer = 0
         self.__equation = ""
 
+        self.__winner_name = ""
+
         self.__results = "GAME OVER!"
+
+        self.__generate_equation()
 
     def get_begin_match_msg(self):
         msg = bold() + color_blue() + "\nWelcome to Quick Maths.\n" + reset()
@@ -41,23 +48,48 @@ class Match:
 
     def start(self, client_socket, player_name):
         print(color_green() + bold() + f"\nGAME STARTED NOW for client {player_name} !\n" + reset())
-        time_now = time.time()
-        self.__generate_equation()
+
         try:
             print(client_socket)
             # Sends problem to client.
             client_socket.sendall(self.get_begin_match_msg().encode())
-
-            while TIME_OUT > time.time() - time_now:
+            end_time = time.time() + 10
+            while (not self.__SEND_RES_FLAG) and (end_time > time.time()):
                 # Receiving answers from client.
                 answer = client_socket.recv(BUFF_SIZE).decode()
                 if not answer:
                     continue
                 print(f"Answer received from {player_name}: " + answer)
-                break
+                if self.__real_answer == int(answer):
+                    self.__winner_name = player_name
+                    self.__SEND_RES_FLAG = True
+                    self.__DRAW = False
+                    msg = self.get_res()
+                    self.__client_socket1.sendall(msg.encode())
+                    self.__client_socket2.sendall(msg.encode())
+                    break
+                else:
+                    self.__SEND_RES_FLAG = True
+                    self.__DRAW = False
+                    msg = self.get_res()
+                    self.__client_socket1.sendall(msg.encode())
+                    self.__client_socket2.sendall(msg.encode())
+                    break
+
+            msg = self.get_res()
+            self.__client_socket1.sendall(msg.encode())
+            self.__client_socket2.sendall(msg.encode())
 
         except Exception as e:
             print_error(e)
+
+    def get_res(self):
+        msg = f"Game Over!\nThe correct answer was {self.__real_answer}!\n\n"
+        if self.__winner_name == "":
+            msg += "DRAW !"
+        else:
+            msg += f"Congratulations to the winner: {self.__winner_name}"
+        return msg
 
     def add_player1(self, client_socket, player_name):
         self.__player1_name = player_name

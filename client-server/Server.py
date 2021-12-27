@@ -100,9 +100,6 @@ if __name__ == '__main__':
             thread = client[3]
             thread.join()
 
-        # Sending results to the clients.
-        broadcast(match.get_results())
-
         # Clean up client's connections.
         clients = []
         player_names = []

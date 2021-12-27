@@ -46,10 +46,12 @@ if __name__ == '__main__':
             end_time = time.time() + 10
 
             while end_time > time.time():
-                # Sending answer to server.
-                # answer = keyboard_listener.getch()
-                # print(f"You Answered: {answer.decode()}")
-                server_socket.sendall("4".encode())
+                if msvcrt.kbhit():
+                    # Sending answer to server.
+                    answer = msvcrt.getch()
+                    print(f"You Answered: {answer.decode()}")
+                    server_socket.sendall(answer)
+                    break
 
             # Receiving results from server.
             results = server_socket.recv(BUFF_SIZE).decode()
