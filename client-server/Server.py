@@ -33,7 +33,7 @@ def broadcast_to_clients(_udp_socket):
         try:
             tcp_port = create_offer(TCP_PORT)
             _udp_socket.sendto(tcp_port, ('<broadcast>', UDP_PORT))
-            print(color_cyan() + "Broadcasting . . ." + reset())
+            # print(color_cyan() + "Broadcasting . . ." + reset())
             time.sleep(1)
         except Exception as e:
             print_error(e)
@@ -64,7 +64,7 @@ if __name__ == '__main__':
         broadcast_thread.start()
 
         while len(clients) < MAX_PLAYERS:
-
+            print(color_cyan() + "Broadcasting . . ." + reset())
             try:
                 # Accepting new client connections.
                 client_socket, client_address = server_socket.accept()
@@ -104,4 +104,4 @@ if __name__ == '__main__':
         clients = []
         player_names = []
 
-        print("Back to broadcast mode...")
+        print("Game over, sending out offer requests...")

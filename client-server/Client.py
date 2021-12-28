@@ -21,9 +21,10 @@ if __name__ == '__main__':
 
     print(bold() + italic() + color_green()
           + "Client started, listening for offer requests..." + reset())
-    try:
-        # Getting the server's broadcast offer.
-        while True:
+
+    # Getting the server's broadcast offer.
+    while True:
+        try:
             data, address = client_socket.recvfrom(BUFF_SIZE)
             tcp_port = resolve_offer(data)
             host_name = address[0]
@@ -37,6 +38,7 @@ if __name__ == '__main__':
             print(f"Connected successfully to {host_name}:{tcp_port} !")
 
             # Sending player name to server.
+            PLAYER_NAME = input("ENTER NAME:")
             server_socket.sendall(PLAYER_NAME.encode())
 
             # Receiving question from server.
@@ -45,17 +47,23 @@ if __name__ == '__main__':
 
             end_time = time.time() + 10
 
+            ANSWERED = False
+
             while end_time > time.time():
                 if msvcrt.kbhit():
                     # Sending answer to server.
                     answer = msvcrt.getch()
                     print(f"You Answered: {answer.decode()}")
                     server_socket.sendall(answer)
+                    ANSWERED = True
+                    # Receiving results from server.
+                    results = server_socket.recv(BUFF_SIZE).decode()
+                    print(results)
                     break
 
-            # Receiving results from server.
-            results = server_socket.recv(BUFF_SIZE).decode()
-            print(results)
+            if not ANSWERED:
+                print("DRAW!")
 
-    except Exception as e:
-        print_error(e)
+        except Exception as e:
+            print_error(e)
+            break

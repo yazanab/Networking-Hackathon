@@ -60,25 +60,34 @@ class Match:
                 if not answer:
                     continue
                 print(f"Answer received from {player_name}: " + answer)
+
                 if self.__real_answer == int(answer):
-                    self.__winner_name = player_name
-                    self.__SEND_RES_FLAG = True
-                    self.__DRAW = False
+                    with threading.Lock():
+                        self.__winner_name = player_name
+                        self.__SEND_RES_FLAG = True
+                        self.__DRAW = False
                     msg = self.get_res()
                     self.__client_socket1.sendall(msg.encode())
                     self.__client_socket2.sendall(msg.encode())
                     break
                 else:
-                    self.__SEND_RES_FLAG = True
-                    self.__DRAW = False
+                    with threading.Lock():
+                        self.__SEND_RES_FLAG = True
+                        self.__DRAW = False
+                        if player_name != self.__player1_name:
+                            self.__winner_name = self.__player1_name
+                        else:
+                            self.__winner_name = self.__player2_answer
                     msg = self.get_res()
                     self.__client_socket1.sendall(msg.encode())
                     self.__client_socket2.sendall(msg.encode())
                     break
 
-            msg = self.get_res()
-            self.__client_socket1.sendall(msg.encode())
-            self.__client_socket2.sendall(msg.encode())
+            if self.__DRAW:
+                msg = self.get_res()
+                with threading.Lock():
+                    self.__client_socket1.sendall(msg.encode())
+                    self.__client_socket2.sendall(msg.encode())
 
         except Exception as e:
             print_error(e)
