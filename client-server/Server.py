@@ -21,15 +21,6 @@ player_names = []
 match = None
 
 
-def broadcast(_msg):
-    try:
-        for _client in clients:
-            _client_socket = clients[0][0]
-            _client_socket.sendall(_msg.encode())
-    except Exception as e:
-        print_error(e)
-
-
 def broadcast_to_clients(_udp_socket):
     while len(clients) < MAX_PLAYERS:
         try:

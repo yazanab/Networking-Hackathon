@@ -26,6 +26,7 @@ if __name__ == '__main__':
             data, address = client_socket.recvfrom(BUFF_SIZE)
             tcp_port = resolve_offer(data)
             host_name = address[0]
+            print(tcp_port)
             print(color_green() + f"Received offer from {address} ,"
                   + italic() + " attempting to connect..." + reset())
             client_socket.close()
@@ -36,7 +37,7 @@ if __name__ == '__main__':
             print(f"Connected successfully to {host_name}:{tcp_port} !")
 
             # Sending player name to server.
-            PLAYER_NAME = input("ENTER NAME:")
+            # PLAYER_NAME = input("ENTER NAME:")
             server_socket.sendall(PLAYER_NAME.encode())
 
             # Receiving question from server.
