@@ -4,8 +4,10 @@ import time
 from lib.ANSI import *
 from lib.UDP import create_offer
 from Match import Match
+import scapy.all as scapy
 
-HOST = '0.0.0.0'
+
+HOST = scapy.get_if_addr("eth1")
 TCP_PORT = 2025
 UDP_PORT = 13117
 BUFF_SIZE = 1024

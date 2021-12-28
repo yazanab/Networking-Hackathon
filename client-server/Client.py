@@ -1,9 +1,7 @@
-import msvcrt
 import socket
 import time
 
-import lib.msvcrt
-from lib import KeyListen
+from lib.KeyListen import *
 from lib.ANSI import *
 from lib.UDP import resolve_offer
 
@@ -12,7 +10,7 @@ BUFF_SIZE = 1024
 PLAYER_NAME = "Ninja\n"
 
 if __name__ == '__main__':
-    keyboard_listener = KeyListen.KBHit()
+    keyboard_listener = KBHit()
     # Creating a UDP socket for server offers.
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -50,19 +48,17 @@ if __name__ == '__main__':
             ANSWERED = False
 
             while end_time > time.time():
-                if msvcrt.kbhit():
+                if keyboard_listener.kbhit():
                     # Sending answer to server.
-                    answer = msvcrt.getch()
-                    print(f"You Answered: {answer.decode()}")
-                    server_socket.sendall(answer)
+                    answer = keyboard_listener.getch()
+                    print(f"You Answered: {answer}")
+                    server_socket.sendall(answer.encode())
                     ANSWERED = True
-                    # Receiving results from server.
-                    results = server_socket.recv(BUFF_SIZE).decode()
-                    print(results)
-                    break
+                    break 
 
-            if not ANSWERED:
-                print("DRAW!")
+            # Receiving results from server.
+            results = server_socket.recv(BUFF_SIZE).decode()
+            print(results)
 
         except Exception as e:
             print_error(e)

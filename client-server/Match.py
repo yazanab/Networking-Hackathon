@@ -42,12 +42,14 @@ class Match:
         msg += italic() + "\nPlayer 1: " + self.__player1_name
         msg += italic() + "\nPlayer 2: " + self.__player2_name
         msg += reset() + color_blue() + "\n==\n"
-        msg += bold() + color_cyan() + "Please answer the following question as fast as you can:\n" + reset()
+        msg += bold() + color_cyan() + \
+            "Please answer the following question as fast as you can:\n" + reset()
         msg += color_yellow() + "How much is " + self.get_math_problem() + " ?\n" + reset()
         return msg
 
     def start(self, client_socket, player_name):
-        print(color_green() + bold() + f"\nGAME STARTED NOW for client {player_name} !\n" + reset())
+        print(color_green() + bold() +
+              f"\nGAME STARTED NOW for client {player_name} !\n" + reset())
 
         try:
             print(client_socket)
@@ -132,31 +134,32 @@ class Match:
         operand2 = operand_optional = answer = None
         operator_optional = random.choice(["+", "-", "*", None])
 
-        match operator:
-            case "+":
-                operand2 = random.randint(0, 9 - operand1)
-                answer = operand1 + operand2
-            case "-":
-                operand2 = random.randint(0, operand1)
-                answer = operand1 - operand2
-            case "*":
-                operand2 = random.randint(0, int(9 / operand1))
-                answer = operand1 * operand2
+        if operator == "+":
+            operand2 = random.randint(0, 9 - operand1)
+            answer = operand1 + operand2
+        elif operator == "-":
+            operand2 = random.randint(0, operand1)
+            answer = operand1 - operand2
+        elif operator == "*":
+            operand2 = random.randint(0, int(9 / operand1))
+            answer = operand1 * operand2
 
-        match operator_optional:
-            case "+":
-                operand_optional = random.randint(0, 9 - answer)
-                answer += operand_optional
-            case "-":
-                operand_optional = random.randint(0, answer)
-                answer -= operand_optional
-            case "*":
-                operand_optional = random.randint(0, int(9 / answer) if answer != 0 else int(9 / (answer + 1)))
-                answer *= operand_optional
+        if operator_optional == "+":
+            operand_optional = random.randint(0, 9 - answer)
+            answer += operand_optional
+        elif operator_optional == "-":
+            operand_optional = random.randint(0, answer)
+            answer -= operand_optional
+        elif operator_optional == "*":
+            operand_optional = random.randint(
+                0, int(9 / answer) if answer != 0 else int(9 / (answer + 1)))
+            answer *= operand_optional
 
-        optional = (" " + operator_optional + " " + operand_optional.__str__()) if operand_optional is not None else ""
+        optional = (" " + operator_optional + " " + operand_optional.__str__()
+                    ) if operand_optional is not None else ""
         equation = operand1.__str__() + " " + operator + " " + operand2.__str__()
-        equation = "(" + equation + ")" + optional if operand_optional is not None else equation
+        equation = "(" + equation + ")" + \
+            optional if operand_optional is not None else equation
 
         self.__equation = equation
         self.__real_answer = answer
