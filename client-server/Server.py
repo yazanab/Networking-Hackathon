@@ -7,7 +7,7 @@ from Match import Match
 import scapy.all as scapy
 
 
-HOST = scapy.get_if_addr("eth1")
+HOST = '0.0.0.0' # scapy.get_if_addr("eth1")
 TCP_PORT = 2025
 UDP_PORT = 13117
 BUFF_SIZE = 1024
